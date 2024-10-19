@@ -126,13 +126,12 @@ module ShopifyAPI
 
       sig { returns(String) }
       def api_key
-        return @dynamic_context.shopify_api_key if @dynamic_context
-        @api_key
+        @dynamic_context&.api_key || @api_key
       end
 
       sig { returns(String) }
       def api_secret_key
-        @api_secret_key
+        @dynamic_context&.api_secret_key || @api_secret_key
       end
 
       sig { returns(String) }
@@ -140,7 +139,7 @@ module ShopifyAPI
 
       sig { returns(Auth::AuthScopes) }
       def scope
-        @scope
+        @dynamic_context&.scope || @scope
       end
 
       sig { returns(T.untyped) }
@@ -154,7 +153,7 @@ module ShopifyAPI
 
       sig { returns(T::Boolean) }
       def private?
-        @is_private
+        @dynamic_context&.is_private || @is_private
       end
 
       sig { returns(T.nilable(String)) }
@@ -162,7 +161,7 @@ module ShopifyAPI
 
       sig { returns(T::Boolean) }
       def embedded?
-        @is_embedded
+        @dynamic_context&.is_embedded || @is_embedded
       end
 
       sig { returns(T::Boolean) }
