@@ -24,6 +24,7 @@ module ShopifyAPI
     @response_as_struct = T.let(false, T.nilable(T::Boolean))
 
     @rest_resource_loader = T.let(nil, T.nilable(Zeitwerk::Loader))
+    @dynamic_context = T.let(nil, T.nilable(ActiveSupport::CurrentAttributes))
 
     class << self
       extend T::Sig
@@ -62,7 +63,8 @@ module ShopifyAPI
         user_agent_prefix: nil,
         old_api_secret_key: nil,
         api_host: nil,
-        response_as_struct: false
+        response_as_struct: false,
+        dynamic_context: nil
       )
         unless ShopifyAPI::AdminVersions::SUPPORTED_ADMIN_VERSIONS.include?(api_version)
           raise Errors::UnsupportedVersionError,
@@ -87,6 +89,7 @@ module ShopifyAPI
         else
           :info
         end
+        @dynamic_context = dynamic_context
 
         load_rest_resources(api_version: api_version)
       end
@@ -121,10 +124,23 @@ module ShopifyAPI
       end
 
       sig { returns(String) }
-      attr_reader :api_key, :api_secret_key, :api_version
+      def api_key
+        return @dynamic_context.shopify_api_key if @dynamic_context
+        @api_key
+      end
+
+      sig { returns(String) }
+      def api_secret_key
+        @api_secret_key
+      end
+
+      sig { returns(String) }
+      attr_reader :api_version
 
       sig { returns(Auth::AuthScopes) }
-      attr_reader :scope
+      def scope
+        @scope
+      end
 
       sig { returns(T.untyped) }
       attr_reader :logger
