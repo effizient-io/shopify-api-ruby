@@ -139,7 +139,11 @@ module ShopifyAPI
 
       sig { returns(Auth::AuthScopes) }
       def scope
-        @dynamic_context&.scope || @scope
+        if @dynamic_context&.scope
+          Auth::AuthScopes.new(@dynamic_context.scope)
+        else
+          @scope
+        end
       end
 
       sig { returns(T.untyped) }
