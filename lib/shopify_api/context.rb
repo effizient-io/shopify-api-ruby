@@ -46,6 +46,7 @@ module ShopifyAPI
           old_api_secret_key: T.nilable(String),
           api_host: T.nilable(String),
           response_as_struct: T.nilable(T::Boolean),
+          dynamic_context: T.untyped
         ).void
       end
       def setup(
